@@ -87,7 +87,7 @@ let asyncSendStream responseData (stream: Stream) (contentType: string) lastModi
             headers <- headers.Add("Cache-Control", "no-cache,no-store")
             headers <- headers.Add("Expires", (DateTime.Now.Subtract(TimeSpan(1, 0, 0))).ToUniversalTime().ToString "r")   
 
-        headers <- ResponseHeaders.initialize headers contentType (Some (int streamToSend.Length)) "" false
+        headers <- ResponseHeaders.initialize headers contentType (Some (int streamToSend.Length))
 
         if contentType.StartsWith ("application/javascript", StringComparison.CurrentCultureIgnoreCase) 
             || contentType.StartsWith ("text/css", StringComparison.CurrentCultureIgnoreCase)
@@ -151,7 +151,7 @@ let asyncInternalSendFile file (responseData: ResponseData) = async {
         use stream = File.OpenRead file
         do! asyncSendStream responseData stream contentType lastModified
     else
-        do! Static.asyncSend304 responseData
+        do! Response.asyncSend304 responseData
 }
 
 let asyncSendFile (file: string) responseData = async {
@@ -167,7 +167,7 @@ let asyncSendFile (file: string) responseData = async {
 let asyncRedirectDirectory directory url responseData = async {
     let path = checkFile directory url
     if path = "" then
-        do! Static.asyncSendNotFound responseData
+        do! Response.asyncSendNotFound responseData
     elif responseData.requestData.header.host.Value <> "" then
         let response = "<html><head>Moved permanently</head><body><h1>Moved permanently</h1>The specified resource moved permanently.</body</html>"
         let responseBytes = Encoding.UTF8.GetBytes response
@@ -188,7 +188,7 @@ let rec asyncServeStaticUrl directory requestData url = async {
     elif not (url.EndsWith "/") then
         do! asyncRedirectDirectory directory (url + "/") responseData
     else
-        do! Static.asyncSendNotFound responseData
+        do! Response.asyncSendNotFound responseData
 }
 
 let asyncServeStatic directory requestData = 
@@ -202,5 +202,19 @@ let private serveStatic directory webPath (requestSession: RequestSession) = asy
     | _ -> return false
 }
 
+let private asyncServeFavicon iconPath (requestSession: RequestSession) = async {
+    match requestSession.Url with
+    | "/favicon.ico" ->
+        let requestData = requestSession.RequestData :?> RequestData.RequestData
+        let responseData = create requestData
+        if File.Exists iconPath then
+            do! asyncSendFile iconPath responseData
+        else
+            do! Response.asyncSendNotFound responseData
+        return true
+    | _ -> return false
+}
+
 let useStatic directory webPath = serveStatic directory webPath
+let useFavicon iconPath = asyncServeFavicon iconPath
 
