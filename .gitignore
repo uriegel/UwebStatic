@@ -3,3 +3,6 @@ Tester/obj
 UwebStatic/obj
 Tester/bin
 UwebStatic/bin
+
+.fake
+.ionide
