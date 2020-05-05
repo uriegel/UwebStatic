@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<OutputType>dll</OutputType>
+		<OutputType>library</OutputType>
 		<TargetFramework>netcoreapp3.1</TargetFramework>
-		<Version>1.2.0</Version>
-		<FileVersion>1.2.0.0</FileVersion>
-		<AssemblyVersion>1.2.0.0</AssemblyVersion>
+		<Version>1.3.0</Version>
+		<FileVersion>1.3.0.0</FileVersion>
+		<AssemblyVersion>1.3.0.0</AssemblyVersion>
 		<Authors>Uwe Riegel</Authors>
 		<Company>Uwe Riegel</Company>		
 		<Description>Static file serving for UWebServer</Description>
@@ -29,7 +29,7 @@
   	</ItemGroup>  
 
 	<ItemGroup>
-		<PackageReference Include="UwebFiles" Version="2.0.0" />
+		<PackageReference Include="UwebFiles" Version="3.0.0" />
 	</ItemGroup>
 
 </Project>
