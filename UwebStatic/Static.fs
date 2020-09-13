@@ -4,6 +4,7 @@ open System.IO
 open System.Text
 open ResponseData
 open Session
+open FSharpTools
 
 let private checkFile directory url = 
     let rawUrl = 
